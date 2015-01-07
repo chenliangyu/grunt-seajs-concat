@@ -9,10 +9,27 @@ exports.init = function(grunt){
         var fileData = grunt.file.read(file.src);
         grunt.log.verbose.writeln("start parse dependencies for "+file.src);
         var deps = parseDependencies(fileData,options);
+        deps.unshift(file.src);
+        if(options.includes && options.includes.length){
+          var files = grunt.file.expand(options.includes);
+          deps = files.concat(deps);
+        }
+        if(options.preload && options.preload.length){
+            options.preload.forEach(function(preload){
+                var src = util.id2Uri(preload,"",options);
+                if(!grunt.file.exists(src)){
+                  grunt.fail.warn("preload source file " +src+ " not found");
+                }else{
+                  var fileData = grunt.file.read(src);
+                  var preloadDeps = parseDependencies(fileData,options);
+                  preloadDeps.unshift(src);
+                  deps = preloadDeps.concat(deps);
+                }
+            });
+        }
         var src = concatFile(deps,options);
-        src.unshift(fileData);
         return src.join(grunt.util.normalizelf(grunt.util.linefeed));
-    };
+    }
     function parseDependencies(fileData,options){
           var result =[];
           var metas = getMetas(fileData);
@@ -34,8 +51,26 @@ exports.init = function(grunt){
     }
     function getDeps(result,metas,rootIds,options){
            metas.forEach(function(meta){
-                var depSources = meta.dependencies.map(function(dep){
-                        return util.id2Uri(dep,util.realPath(meta.id,options),options);
+                var deps = meta.dependencies;
+                if(options.excludeDependencies && options.excludeDependencies.length){
+                   deps = meta.dependencies.filter(function(dep){
+                      var matchExclude = options.excludeDependencies.some(function(excludeDep){
+                          if(grunt.util.kindOf(excludeDep) === "string"){
+                            return excludeDep === dep;
+                          }else if(grunt.util.kindOf(excludeDep) === "regexp"){
+                            return excludeDep.test(dep);
+                          }else{
+                            return true;
+                          }
+                      });
+                      if(matchExclude){
+                        grunt.log.writeln("exclude dependency "+ dep);
+                      }
+                     return !matchExclude;
+                   });
+                }
+                var depSources = deps.map(function(dep){
+                  return util.id2Uri(dep,util.realPath(meta.id,options),options);
                 });
                 grunt.log.verbose.writeln("start to add direct dependencies of "+meta.id+" to result array");
                 addDeps(result,depSources,rootIds,options);
@@ -43,8 +78,12 @@ exports.init = function(grunt){
     }
     function addDeps(result,depSources,rootIds,options){
         depSources.forEach(function(src){
-            if(result.indexOf(src)!==-1 || rootIds.indexOf(src)!==-1){
+            if(!grunt.file.exists(src)){
+                grunt.fail.warn("source file "+src+ " not found");
+            }else if(result.indexOf(src)!==-1 || rootIds.indexOf(src)!==-1){
                 grunt.fail.warn('found circle dependencies '+src);
+            }else if(options.excludes && options.excludes.length && grunt.file.isMatch(options.excludes,src)){
+                grunt.log.verbose.writeln("exclude file "+src+" from src code");
             }else{
                 grunt.log.verbose.writeln("add dependency "+src+" to result array ");
                 result.push(src);
@@ -57,10 +96,10 @@ exports.init = function(grunt){
     function concatFile(deps){
         return deps.map(function(dep){
             return grunt.file.read(dep);
-        })
-    };
+        });
+    }
     exports.jsProcessor = jsProcessor;
     exports.parseDependencies = parseDependencies;
     exports.concatFile = concatFile;
     return exports;
-}
+};

@@ -1,6 +1,6 @@
 # grunt-seajs-concat
 
-> concat seajs module file
+> concat seajs module file,if it's a seajs module,must use [grunt-seajs-converter](https://github.com/chenliangyu/grunt-seajs-converter.git) to convert seajs module first,otherwise it only concat file like grunt-contrib-concat;
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
@@ -22,6 +22,7 @@ grunt.loadNpmTasks('grunt-seajs-concat');
 ### Overview
 In your project's Gruntfile, add a section named `seajs_concat` to the data object passed into `grunt.initConfig()`.
 
+
 ```js
 grunt.initConfig({
   seajs_concat: {
@@ -37,50 +38,125 @@ grunt.initConfig({
 
 ### Options
 
-#### options.separator
+#### options.base
 Type: `String`
-Default value: `',  '`
+Default value: `""`
 
-A string value that is used to do something with whatever.
+the real path of base defined in seajs;
 
-#### options.punctuation
-Type: `String`
-Default value: `'.'`
+#### options.alias
+Type: `Object`
+Default value: `{}`
 
-A string value that is used to do something else with whatever else.
+alias defined in seajs;
 
-### Usage Examples
+#### options.paths
+Type: `Object`
+Default value: `{}`
 
+paths defined in seajs;
+
+#### options.preload
+Type: `Array`
+Default value: `[]`
+
+preload defined in seajs;will be concated preload module and its dependencies first;
+
+#### options.excludeDependencies
+Type: `Array`
+Default value: `[]`
+
+exclude dependencies which equal the value in array or match the regexp in array;
+example
+```js
+{
+  excludeDependencies:["common",/^jquery/]
+}
+define("id",["common","jquery","jquery-ui"],function(){...})
+//will not concat dependencies "common","jquery","jquery-ui";
+```
+#### options.excludes
+Type: `Array`
+Default value: `[]`
+
+exclude dependencies which path is match file patterns in array;
+example
+```js
+{
+  excludes:["common/**/*.js","jquery/**/*.js"]
+}
+//will not concat js files under common and jquery folder;
+```
+#### options.includes
+Type: `Array`
+Default value: `[]`
+
+include dependencies which path is match file patterns in array;
+example
+```js
+{
+  includes:["common/**/*.js","jquery/**/*.js"]
+}
+//will add js files under common and jquery folder;
+```
+#### options.processors
+define custom processors;
+example:
+```js
+{
+  processors:[require("processorsfilepath").init(grunt).jsProcessor];
+}
+exports.init = function(grunt){
+    var exports = {};
+    /**args:
+    * file:{src:source file path passed by grunt.initConfig({})}
+    *
+    **/
+    function jsProcessor(file,options){
+
+    }
+    exports.jsProcessor = jsProcessor;
+}
+```
 #### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
-
+...js
+{
+        base : "",
+        alias : {},
+        paths : {},
+        preload : [],
+        excludeDependencies:[],
+        excludes : [],
+        includes : [],
+        processors : {
+            ".js" : script.jsProcessor
+        }
+}
+...
+### Usage Examples
 ```js
 grunt.initConfig({
   seajs_concat: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
+    options : {
+        base : "example"
     },
+    common : {
+        src : "example/common/common-*.js",
+        dest : "tmp/common/common.js"
+    },
+    main : {
+         options:{
+            excludeDependencies : ["common/common"]
+         },
+         files : {
+             "tmp/page/index.js" : ["example/page/index/index.js"],
+             "tmp/page/inside.js" : ["example/page/inside/inside.js"]
+         }
+    }
   },
 });
 ```
 
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
-
-```js
-grunt.initConfig({
-  seajs_concat: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-});
-```
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).

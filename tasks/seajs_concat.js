@@ -21,10 +21,9 @@ module.exports = function(grunt) {
         alias : {},
         paths : {},
         preload : [],
-
-        create : false,
-        createPath : "",
-
+        excludeDependencies:[],
+        excludes : [],
+        includes : [],
         processors : {
             ".js" : script.jsProcessor
         }
@@ -42,7 +41,7 @@ module.exports = function(grunt) {
         }
       }).map(function(filepath) {
          var extname = path.extname(filepath);
-         var processor = this.options[extname];
+         var processor = options.processors[extname];
          if(!processor){
              return grunt.file.read(filepath);
          }

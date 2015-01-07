@@ -51,4 +51,47 @@ describe("Test Javascript concat processor",function(){
         },{});
         expect(data).toEqual(grunt.file.read("spec/expected/circle.js"));
     });
+    it("should concat files in preload",function(){
+        spyOn(util,"id2Uri").and.callFake(function(id,options){
+            return id.replace("./","spec/fixtures/") + ".js";
+        });
+        spyOn(util,"realPath").and.callFake(function(id,options){
+            return id.replace("./","spec/fixtures/") + ".js";
+        });
+        var data = jsProcessor.jsProcessor({
+            src : "spec/fixtures/circle.js"
+        },{
+            preload : ["./index"]
+        });
+        expect(data).toEqual(grunt.file.read("spec/expected/preload.js"));
+    });
+    it("should concat files when use includes and excludes",function(){
+        spyOn(util,"id2Uri").and.callFake(function(id,options){
+            return id.replace("./","spec/fixtures/") + ".js";
+        });
+        spyOn(util,"realPath").and.callFake(function(id,options){
+            return id.replace("./","spec/fixtures/") + ".js";
+        });
+        var data = jsProcessor.jsProcessor({
+            src : "spec/fixtures/circle.js"
+        },{
+            excludes:["spec/fixtures/deps-circle-1.js","spec/fixtures/deps-circle-2.js"],
+            includes : ["spec/fixtures/deps-index-**.js","spec/fixtures/concat-**.js"]
+        });
+        expect(data).toEqual(grunt.file.read("spec/expected/includesAndExcludes.js"));
+    });
+    it("should concat files when use excludeDependencies",function(){
+        spyOn(util,"id2Uri").and.callFake(function(id,options){
+            return id.replace("./","spec/fixtures/") + ".js";
+        });
+        spyOn(util,"realPath").and.callFake(function(id,options){
+            return id.replace("./","spec/fixtures/") + ".js";
+        });
+        var data = jsProcessor.jsProcessor({
+            src : "spec/fixtures/circle.js"
+        },{
+            excludeDependencies:[/^.\/deps/]
+        });
+        expect(data).toEqual(grunt.file.read("spec/expected/excludeDeps.js"));
+    });
 });
