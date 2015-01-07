@@ -32,36 +32,19 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     seajs_concat: {
         options : {
-            base : "example",
-            alias : {
-
-            },
-            paths : {
-
-            },
-            preload : {
-
-            }
+            base : "example"
         },
         common : {
-            options : {
-                create : true,
-                createPath : "example/util"
-            },
-            src : "example/common/**/*.js",
+            src : "example/common/common-*.js",
             dest : "tmp/common/common.js"
         },
         main : {
-            src : "example/page/index.js",
-            dest : "tmp/page/index.js"
+             files : {
+                 "tmp/page/index.js" : ["page/index/index.js"],
+                 "tmp/page/inside.js" : ["page/inside/inside.js"]
+             }
         }
-    },
-
-    // Unit tests.
-    "jasmine_node": {
-      all: ['test/']
     }
-
   });
 
   // Actually load this plugin's task(s).
@@ -70,11 +53,11 @@ module.exports = function(grunt) {
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-jasmine-node');
+  grunt.loadNpmTasks('jasmine');
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean:example', 'seajs_concat', 'jasmine_node',"clean:test"]);
+  grunt.registerTask('test', ['clean:example', 'specs',"clean:test"]);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);

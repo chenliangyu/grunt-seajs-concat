@@ -1,0 +1,1 @@
+define("common/common-c",[],function(){});

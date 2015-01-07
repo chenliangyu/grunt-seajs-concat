@@ -1,0 +1,1 @@
+define("page/index/index-a",[],function(){})

@@ -1,0 +1,1 @@
+define("test/fixtures/deps-index-5",[],function(require){});

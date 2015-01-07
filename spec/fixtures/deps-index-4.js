@@ -1,0 +1,1 @@
+define("spec/fixtures/deps-index-4",[],function(require){});

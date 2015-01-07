@@ -1,0 +1,1 @@
+define("page/inside/inside-a",[],function(){})

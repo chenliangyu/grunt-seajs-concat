@@ -1,0 +1,1 @@
+define("spec/fixtures/deps-circle-1",["./circle","./deps-circle-2"],function(){require("./circle");require("./deps-circle-2");});
