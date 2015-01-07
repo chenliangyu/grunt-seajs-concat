@@ -119,7 +119,7 @@ exports.init = function(grunt){
 }
 ```
 #### Default Options
-...js
+```js
 {
         base : "",
         alias : {},
@@ -132,7 +132,7 @@ exports.init = function(grunt){
             ".js" : script.jsProcessor
         }
 }
-...
+```
 ### Usage Examples
 ```js
 grunt.initConfig({
