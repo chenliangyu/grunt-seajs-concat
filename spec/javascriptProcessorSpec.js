@@ -106,4 +106,12 @@ describe("Test Javascript concat processor",function(){
         },{});
         expect(data).toEqual(grunt.file.read("spec/expected/http.js"));
     });
+    it("should concat correct file",function(){
+        var data = jsProcessor.jsProcessor({
+            src : "spec/fixtures/base/base.js"
+        },{
+            base : "spec/fixtures/base"
+        });
+        expect(data).toEqual(grunt.file.read("spec/expected/base.js"));
+    });
 });

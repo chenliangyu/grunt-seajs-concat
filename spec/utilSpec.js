@@ -61,6 +61,11 @@ describe("Test Util functionality",function(){
            id = "../test";
            refUri = "front_end/js/common/main/index";
            expect(util.id2Uri(id,refUri,options)).toEqual("front_end\\js\\common\\test.js");
+           refUri = "front_end/js/common/main/index";
+           options = {
+               base : "front_end"
+           }
+           expect(util.id2Uri(id,refUri,options)).toEqual("front_end\\js\\common\\test.js");
            id = "/test";
            expect(util.id2Uri(id,refUri,options)).toEqual("test.js");
            id = "common/test";

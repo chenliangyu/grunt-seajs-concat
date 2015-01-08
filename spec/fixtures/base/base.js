@@ -1,0 +1,1 @@
+define("base",["../deps-base-1","../../../../test"],function(){});

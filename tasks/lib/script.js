@@ -69,10 +69,14 @@ exports.init = function(grunt){
                        }
                    }
                   var isAb = util.isAbsolute(dep);
+                  var hasVars = util.isVars(dep);
                    if(isAb){
                        grunt.log.writeln("find uri dependencies "+dep);
                    }
-                 return !matchExclude && !isAb;
+                   if(hasVars){
+                       grunt.log.writeln("find vars in  dependencies "+dep);
+                   }
+                 return !matchExclude && !isAb && !hasVars;
                });
                 var depSources = deps.map(function(dep){
                   return util.id2Uri(dep,util.realPath(meta.id,options),options);

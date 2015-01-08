@@ -16,6 +16,9 @@ exports.id2Uri = function(dep,refUri,options){
     var uri = this.addBase(dep,refUri,options);
     return uri + ".js";
 };
+exports.isVars = function(dep){
+    return dep.indexOf("{")>-1;
+};
 exports.parseAlias = function(id,options){
     var alias = options.alias;
     return alias && typeof alias[id] ==="string" ? alias[id] : id;

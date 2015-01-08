@@ -1,0 +1,1 @@
+define("./deps-base-1",[],function(){});
