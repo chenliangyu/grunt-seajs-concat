@@ -94,4 +94,16 @@ describe("Test Javascript concat processor",function(){
         });
         expect(data).toEqual(grunt.file.read("spec/expected/excludeDeps.js"));
     });
+    it("should not concat dependencies like 'http://' | '//' ",function(){
+        spyOn(util,"id2Uri").and.callFake(function(id,options){
+            return id.replace("./","spec/fixtures/") + ".js";
+        });
+        spyOn(util,"realPath").and.callFake(function(id,options){
+            return id.replace("./","spec/fixtures/") + ".js";
+        });
+        var data = jsProcessor.jsProcessor({
+            src : "spec/fixtures/http.js"
+        },{});
+        expect(data).toEqual(grunt.file.read("spec/expected/http.js"));
+    });
 });

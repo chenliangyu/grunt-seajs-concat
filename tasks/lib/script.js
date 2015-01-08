@@ -44,7 +44,7 @@ exports.init = function(grunt){
         try{
             astCache = ast.getAst(fileData);
         }catch(e){
-            grunt.log.error('js parse error ' +src.red);
+            grunt.log.error('js parse error ' +fileData.red);
             grunt.fail.fatal(e.message + ' [ line:' + e.line + ', col:' + e.col + ', pos:' + e.pos + ' ]');
         }
         return ast.parse(astCache);
@@ -52,23 +52,28 @@ exports.init = function(grunt){
     function getDeps(result,metas,rootIds,options){
            metas.forEach(function(meta){
                 var deps = meta.dependencies;
-                if(options.excludeDependencies && options.excludeDependencies.length){
-                   deps = meta.dependencies.filter(function(dep){
-                      var matchExclude = options.excludeDependencies.some(function(excludeDep){
-                          if(grunt.util.kindOf(excludeDep) === "string"){
-                            return excludeDep === dep;
-                          }else if(grunt.util.kindOf(excludeDep) === "regexp"){
-                            return excludeDep.test(dep);
-                          }else{
-                            return true;
-                          }
-                      });
-                      if(matchExclude){
-                        grunt.log.writeln("exclude dependency "+ dep);
-                      }
-                     return !matchExclude;
-                   });
-                }
+               deps = meta.dependencies.filter(function(dep){
+                   var matchExclude = false;
+                   if(options.excludeDependencies && options.excludeDependencies.length) {
+                       matchExclude = options.excludeDependencies.some(function (excludeDep) {
+                           if (grunt.util.kindOf(excludeDep) === "string") {
+                               return excludeDep === dep;
+                           } else if (grunt.util.kindOf(excludeDep) === "regexp") {
+                               return excludeDep.test(dep);
+                           } else {
+                               return true;
+                           }
+                       });
+                       if (matchExclude) {
+                           grunt.log.writeln("exclude dependency " + dep);
+                       }
+                   }
+                  var isAb = util.isAbsolute(dep);
+                   if(isAb){
+                       grunt.log.writeln("find uri dependencies "+dep);
+                   }
+                 return !matchExclude && !isAb;
+               });
                 var depSources = deps.map(function(dep){
                   return util.id2Uri(dep,util.realPath(meta.id,options),options);
                 });

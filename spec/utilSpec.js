@@ -10,6 +10,14 @@ describe("Test Util functionality",function(){
             }
             expect(util.realPath(id,options)).toEqual("spec\\fixtures\\test.js");
     });
+    it("should check the if the id is an uri",function(){
+        var id = "http://code.jquery.com/jquery.min.js";
+        expect(util.isAbsolute(id)).toBeTruthy();
+        id = "//code.jquery.com/jquery.min.js";
+        expect(util.isAbsolute(id)).toBeTruthy();
+        id = "file://code.jquery.com";
+        expect(util.isAbsolute(id)).toBeTruthy();
+    });
     it("should return the corrent uri",function(){
           var id = "common/test";
           var no_id = "no/test";

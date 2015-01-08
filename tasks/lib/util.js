@@ -1,12 +1,14 @@
 /**
  * Created by Administrator on 2015/1/6.
  */
-var format = require("util").format;
 var path = require("path");
 var PATHS_RE = /^([^/:]+)(\/.+)$/;
 var ABSOLUTE_RE = /^\/\/.|:\//;
 exports.realPath = function(id,options){
     return path.join(options.base,id)+".js";
+};
+exports.isAbsolute = function(id){
+    return ABSOLUTE_RE.test(id);
 };
 exports.id2Uri = function(dep,refUri,options){
     dep = this.parseAlias(dep,options);
@@ -30,7 +32,7 @@ exports.addBase = function(id,refUri,options){
     var ret;
     var first = id.charAt(0);
     // Absolute
-    if (ABSOLUTE_RE.test(id)) {
+    if (this.isAbsolute(id)) {
         ret =id;
     }
     // Relative
