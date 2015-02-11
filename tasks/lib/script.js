@@ -6,29 +6,51 @@ var util = require("./util");
 exports.init = function(grunt){
     var exports = {};
     function jsProcessor(file,options){
-        var fileData = grunt.file.read(file.src);
-        grunt.log.verbose.writeln("start parse dependencies for "+file.src);
-        var deps = parseDependencies(fileData,options);
-        deps.unshift(file.src);
+        var src = file.src;
         if(options.includes && options.includes.length){
-          var files = grunt.file.expand(options.includes);
-          deps = files.concat(deps);
+            var files = grunt.file.expand(options.includes);
+            src = concatPath(files,src);
         }
         if(options.preload && options.preload.length){
             options.preload.forEach(function(preload){
-                var src = util.id2Uri(preload,"",options);
-                if(!grunt.file.exists(src)){
-                  grunt.fail.warn("preload source file " +src+ " not found");
+                var preloadPath = util.id2Uri(preload,"",options);
+                if(!grunt.file.exists(preloadPath)){
+                    grunt.fail.warn("preload source file " +src+ " not found");
                 }else{
-                  var fileData = grunt.file.read(src);
-                  var preloadDeps = parseDependencies(fileData,options);
-                  preloadDeps.unshift(src);
-                  deps = preloadDeps.concat(deps);
+                    var fileData = grunt.file.read(preloadPath);
+                    var preloadDeps = parseDependencies(fileData,options);
+                    preloadDeps.unshift(preloadPath);
+                    src = concatPath(preloadDeps,src);
                 }
             });
         }
-        var src = concatFile(deps,options);
-        return src.join(grunt.util.normalizelf(grunt.util.linefeed));
+        var concats = [];
+        src.filter(function(filepath) {
+            // Warn on and remove invalid source files (if nonull was set).
+            if (!grunt.file.exists(filepath)) {
+                grunt.log.warn('Source file "' + filepath + '" not found.');
+                return false;
+            } else {
+                return true;
+            }
+        }).forEach(function(filePath){
+            if(concats.indexOf(filePath)!==-1) {return;}
+            var fileData = grunt.file.read(filePath);
+            grunt.log.verbose.writeln("start parse dependencies for "+filePath);
+            var deps = parseDependencies(fileData,options);
+            deps.unshift(filePath);
+            concats = concatPath(concats,deps);
+        });
+        return concatFile(concats,options);
+    }
+    function concatPath(paths,src){
+        paths.forEach(function(path){
+            var index = src.indexOf(path);
+            if(index!==-1){
+                src.splice(index,1);
+            }
+        });
+        return paths.concat(src);
     }
     function parseDependencies(fileData,options){
           var result =[];
@@ -105,7 +127,7 @@ exports.init = function(grunt){
     function concatFile(deps){
         return deps.map(function(dep){
             return grunt.file.read(dep);
-        });
+        }).join(grunt.util.normalizelf(grunt.util.linefeed));
     }
     exports.jsProcessor = jsProcessor;
     exports.parseDependencies = parseDependencies;
