@@ -8,7 +8,7 @@ describe("Test Util functionality",function(){
             var options = {
                 base : "spec"
             }
-            expect(util.realPath(id,options)).toEqual("spec\\fixtures\\test.js");
+            expect(util.realPath(id,options)).toEqual("spec/fixtures/test.js");
     });
     it("should check the if the id is an uri",function(){
         var id = "http://code.jquery.com/jquery.min.js";
@@ -25,15 +25,15 @@ describe("Test Util functionality",function(){
           var options = {
               base : "front_end/js"
           };
-         expect(util.id2Uri(id,refUri,options)).toEqual("front_end\\js\\common\\test.js");
+         expect(util.id2Uri(id,refUri,options)).toEqual("front_end/js/common/test.js");
           options = {
                base : "front_end",
                paths : {
                    common : "js/common"
                }
            };
-          expect(util.id2Uri(id,refUri,options)).toEqual("front_end\\js\\common\\test.js");
-          expect(util.id2Uri(no_id,refUri,options)).toEqual("front_end\\no\\test.js");
+          expect(util.id2Uri(id,refUri,options)).toEqual("front_end/js/common/test.js");
+          expect(util.id2Uri(no_id,refUri,options)).toEqual("front_end/no/test.js");
            id = "test";
            options = {
                base : "front_end",
@@ -41,8 +41,8 @@ describe("Test Util functionality",function(){
                    test : "js/common/test"
                }
            };
-           expect(util.id2Uri(id,refUri,options)).toEqual("front_end\\js\\common\\test.js");
-           expect(util.id2Uri(no_id,refUri,options)).toEqual("front_end\\no\\test.js");
+           expect(util.id2Uri(id,refUri,options)).toEqual("front_end/js/common/test.js");
+           expect(util.id2Uri(no_id,refUri,options)).toEqual("front_end/no/test.js");
            id = "test";
            options = {
                 base : "front_end",
@@ -53,19 +53,19 @@ describe("Test Util functionality",function(){
                    common : "js/common"
                }
            };
-           expect(util.id2Uri(id,refUri,options)).toEqual("front_end\\js\\common\\test.js");
-           expect(util.id2Uri(no_id,refUri,options)).toEqual("front_end\\no\\test.js");
+           expect(util.id2Uri(id,refUri,options)).toEqual("front_end/js/common/test.js");
+           expect(util.id2Uri(no_id,refUri,options)).toEqual("front_end/no/test.js");
            id = "./test";
            refUri = "front_end/js/common/main";
-           expect(util.id2Uri(id,refUri,options)).toEqual("front_end\\js\\common\\test.js");
+           expect(util.id2Uri(id,refUri,options)).toEqual("front_end/js/common/test.js");
            id = "../test";
            refUri = "front_end/js/common/main/index";
-           expect(util.id2Uri(id,refUri,options)).toEqual("front_end\\js\\common\\test.js");
+           expect(util.id2Uri(id,refUri,options)).toEqual("front_end/js/common/test.js");
            refUri = "front_end/js/common/main/index";
            options = {
                base : "front_end"
            }
-           expect(util.id2Uri(id,refUri,options)).toEqual("front_end\\js\\common\\test.js");
+           expect(util.id2Uri(id,refUri,options)).toEqual("front_end/js/common/test.js");
            id = "/test";
            expect(util.id2Uri(id,refUri,options)).toEqual("test.js");
            id = "common/test";
@@ -75,7 +75,7 @@ describe("Test Util functionality",function(){
                     common : "/front_end/common"
                 }
             };
-            expect(util.id2Uri(id,refUri,options)).toEqual("front_end\\common\\test.js");
+            expect(util.id2Uri(id,refUri,options)).toEqual("front_end/common/test.js");
             id = "test";
             options = {
                 base : "front_end",
@@ -83,6 +83,6 @@ describe("Test Util functionality",function(){
                     test : "/common/test"
                 }
             };
-            expect(util.id2Uri(id,refUri,options)).toEqual("common\\test.js");
+            expect(util.id2Uri(id,refUri,options)).toEqual("common/test.js");
     });
 });

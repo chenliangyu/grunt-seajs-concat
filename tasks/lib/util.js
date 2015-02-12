@@ -5,7 +5,7 @@ var path = require("path");
 var PATHS_RE = /^([^/:]+)(\/.+)$/;
 var ABSOLUTE_RE = /^\/\/.|:\//;
 exports.realPath = function(id,options){
-    return path.join(options.base,id)+".js";
+    return this.unixy(path.join(options.base,id)+".js");
 };
 exports.isAbsolute = function(id){
     return ABSOLUTE_RE.test(id);
@@ -14,7 +14,7 @@ exports.id2Uri = function(dep,refUri,options){
     dep = this.parseAlias(dep,options);
     dep = this.parsePaths(dep,options);
     var uri = this.addBase(dep,refUri,options);
-    return uri + ".js";
+    return this.unixy(uri + ".js");
 };
 exports.isVars = function(dep){
     return dep.indexOf("{")>-1;
@@ -51,4 +51,7 @@ exports.addBase = function(id,refUri,options){
         ret = path.join(options.base, id);
     }
     return ret;
+};
+exports.unixy = function(uri) {
+    return uri.replace(/\\/g, '/');
 };
