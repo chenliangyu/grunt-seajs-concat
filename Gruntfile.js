@@ -9,7 +9,7 @@
 
 module.exports = function(grunt) {
 
-  // Project configuration
+  // Project configuration.
   grunt.initConfig({
     jshint: {
       all: [
