@@ -3,13 +3,14 @@
  * https://github.com/chenliangyu/grunt-seajs-concat
  *
  * Copyright (c) 2015 binavid chen
+   test
  */
 
 'use strict';
 
 module.exports = function(grunt) {
 
-  // Project configuration.
+  // Project configuration...
   grunt.initConfig({
     jshint: {
       all: [
