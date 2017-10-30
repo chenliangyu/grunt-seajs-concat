@@ -3,7 +3,6 @@
  * https://github.com/chenliangyu/grunt-seajs-concat
  *
  * Copyright (c) 2015 binavid chen
- * abc
  */
 
 'use strict';
